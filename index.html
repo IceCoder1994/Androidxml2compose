@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .textarea {
+            width: 300px;
+            height: 300px;
+        }
+    </style>
+</head>
+
+<body>
+<textarea class="textarea" id="textarea"></textarea>
+<div>
+    <button id="btn">转换</button>
+</div>
+<textarea id="output" class="textarea"></textarea>
+<div>
+    <button id="btn-copy">复制</button>
+</div>
+</body>
+
+</html>
+<script>
+    document.getElementById('btn').onclick = function () {
+        let oldCode = document.getElementById('textarea').value;
+        if (oldCode.startsWith('<TextView')) {//是一个文本
+            oldCode = oldCode.replaceAll('\n', "")
+            let list = oldCode.split('android:');
+            list.splice(0, 1);
+            list[list.length - 1] = list[list.length - 1].replace('/>', "")
+            let properties = {
+                width: '',
+                height: '',
+                fontSize: '',
+                color: '',
+                text: '',
+            };
+            for (let item of list) {
+                item = item.trim();
+                if (item.startsWith('layout_width=')) {
+                    let value = item.replace('layout_width=\"', '');
+                    properties.width = value.substring(0, value.length - 1).replace('dp', ".sdp()")
+                } else if (item.startsWith('layout_height=')) {
+                    let value = item.replace('layout_height=\"', '');
+                    properties.height = value.substring(0, value.length - 1).replace('dp', ".sdp()")
+                } else if (item.startsWith('textSize=')) {
+                    let value = item.replace('textSize=\"', '');
+                    properties.fontSize = value.substring(0, value.length - 1).replace('sp', ".ssp()")
+                } else if (item.startsWith('textColor=')) {
+                    let value = item.replace('textColor=\"', '');
+                    properties.color = '0x' + value.substring(0, value.length - 1).replace('#', "")
+                } else if (item.startsWith('text=')) {
+                    let value = item.replace('text=\"', '');
+                    properties.text = value.substring(0, value.length - 1)
+                }
+            }
+            let output = `Text(\n\ttext = "${properties.text}",\n\tfontSize = ${properties.fontSize},\n\tcolor = Color(${properties.color}),\n\tmodifier = Modifier\n\t.width(${properties.width})\n\t.height(${properties.height})\n)`
+            document.getElementById("output").value = output
+        }
+    }
+
+    document.getElementById('btn-copy').onclick = function () {
+        document.getElementById("output").select();
+        document.execCommand('copy')
+    }
+
+</script>
