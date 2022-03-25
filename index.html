@@ -60,7 +60,7 @@
                     properties.text = value.substring(0, value.length - 1)
                 }
             }
-            let output = `Text(\n\ttext = "${properties.text}",\n\tfontSize = ${properties.fontSize},\n\tcolor = Color(${properties.color}),\n\tmodifier = Modifier\n\t.width(${properties.width})\n\t.height(${properties.height})\n)`
+            let output = `IceText(\n\ttext = "${properties.text}",\n\tfontSize = ${properties.fontSize},\n\tcolor = Color(${properties.color}),\n\tmodifier = Modifier\n\t.width(${properties.width})\n\t.height(${properties.height})\n)`
             document.getElementById("output").value = output
         }
     }
