@@ -30,10 +30,6 @@
     document.getElementById('btn').onclick = function () {
         let oldCode = document.getElementById('textarea').value;
         if (oldCode.startsWith('<TextView')) {//是一个文本
-            oldCode = oldCode.replaceAll('\n', "")
-            let list = oldCode.split('android:');
-            list.splice(0, 1);
-            list[list.length - 1] = list[list.length - 1].replace('/>', "")
             let properties = {
                 width: '',
                 height: '',
@@ -41,25 +37,11 @@
                 color: '',
                 text: '',
             };
-            for (let item of list) {
-                item = item.trim();
-                if (item.startsWith('layout_width=')) {
-                    let value = item.replace('layout_width=\"', '');
-                    properties.width = value.substring(0, value.length - 1).replace('dp', ".sdp()")
-                } else if (item.startsWith('layout_height=')) {
-                    let value = item.replace('layout_height=\"', '');
-                    properties.height = value.substring(0, value.length - 1).replace('dp', ".sdp()")
-                } else if (item.startsWith('textSize=')) {
-                    let value = item.replace('textSize=\"', '');
-                    properties.fontSize = value.substring(0, value.length - 1).replace('sp', ".ssp()")
-                } else if (item.startsWith('textColor=')) {
-                    let value = item.replace('textColor=\"', '');
-                    properties.color = '0x' + value.substring(0, value.length - 1).replace('#', "")
-                } else if (item.startsWith('text=')) {
-                    let value = item.replace('text=\"', '');
-                    properties.text = value.substring(0, value.length - 1)
-                }
-            }
+            properties.width = /(?<=android:layout_width=\").*(?=dp\")/g.exec(oldCode)[0]+".sdp()"
+            properties.height = /(?<=android:layout_height=\").*(?=dp\")/g.exec(oldCode)[0]+".sdp()"
+            properties.fontSize = /(?<=android:textSize=\").*(?=sp\")/g.exec(oldCode)[0]+".ssp()"
+            properties.color = '0x'+(/(?<=android:textColor=\"\#).*(?=\")/g.exec(oldCode)[0])
+            properties.text = /(?<=android:text=\").*(?=\")/g.exec(oldCode)[0]
             let output = `IceText(\n\ttext = "${properties.text}",\n\tfontSize = ${properties.fontSize},\n\tcolor = Color(${properties.color}),\n\tmodifier = Modifier\n\t.width(${properties.width})\n\t.height(${properties.height})\n)`
             document.getElementById("output").value = output
         }
