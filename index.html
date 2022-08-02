@@ -37,9 +37,9 @@
                 color: '',
                 text: '',
             };
-            properties.width = /(?<=android:layout_width=\").*(?=dp\")/g.exec(oldCode)[0]+".sdp()"
-            properties.height = /(?<=android:layout_height=\").*(?=dp\")/g.exec(oldCode)[0]+".sdp()"
-            properties.fontSize = /(?<=android:textSize=\").*(?=sp\")/g.exec(oldCode)[0]+".ssp()"
+            properties.width = /(?<=android:layout_width=\").*(?=dp\")/g.exec(oldCode)[0]+".sdp"
+            properties.height = /(?<=android:layout_height=\").*(?=dp\")/g.exec(oldCode)[0]+".sdp"
+            properties.fontSize = /(?<=android:textSize=\").*(?=sp\")/g.exec(oldCode)[0]+".ssp"
             properties.color = '0x'+(/(?<=android:textColor=\"\#).*(?=\")/g.exec(oldCode)[0])
             properties.text = /(?<=android:text=\")[\s\S]*(?=\"\nandroid:textColor)/g.exec(oldCode)[0]
             let output = `YzText(\n\ttext = "${properties.text}",\n\tfontSize = ${properties.fontSize},\n\tcolor = Color(${properties.color}),\n\tmodifier = Modifier\n\t.width(${properties.width})\n\t.height(${properties.height})\n)`
